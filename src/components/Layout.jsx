@@ -1,19 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Прибрали useNavigate
+import AuthContext from '../context/AuthContext';
+
 
 const Layout = ({ children }) => {
-    const navigate = useNavigate();
     const location = useLocation();
 
-
+    const { logoutUser } = useContext(AuthContext);
     const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-
-    const handleLogout = () => {
-        // Потім тут буде очищення токена
-        console.log("Logout clicked");
-        navigate('/login');
-    };
 
     return (
         <>
@@ -37,7 +32,7 @@ const Layout = ({ children }) => {
                                 <Button color="inherit" component={Link} to="/profile">
                                     My Profile
                                 </Button>
-                                <Button color="error" variant="contained" size="small" onClick={handleLogout} sx={{ ml: 2 }}>
+                                <Button color="error" variant="contained" size="small" onClick={logoutUser} sx={{ ml: 2 }}>
                                     Logout
                                 </Button>
                             </Box>
