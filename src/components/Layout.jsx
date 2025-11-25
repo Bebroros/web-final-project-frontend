@@ -1,26 +1,31 @@
-import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom'; // Прибрали useNavigate
-import AuthContext from '../context/AuthContext';
+import { AppBar, Toolbar, Button, Box, Container } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
 
 
 const Layout = ({ children }) => {
     const location = useLocation();
 
-    const { logoutUser } = useContext(AuthContext);
     const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
     return (
         <>
             {!isAuthPage && (
-                <AppBar position="static">
+                <AppBar position="static" sx={{ backgroundColor: '#2e436f' }}>
                     <Container maxWidth="lg">
                         <Toolbar disableGutters>
 
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, mr: 2 }}>
-                                Smart Calendar
-                            </Typography>
-
+                            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/pot_logo.png"
+                                    alt="Logo"
+                                    sx={{
+                                        height: 70,
+                                        width: 'auto',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </Box>
 
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Button color="inherit" component={Link} to="/calendar">
@@ -31,9 +36,6 @@ const Layout = ({ children }) => {
                                 </Button>
                                 <Button color="inherit" component={Link} to="/profile">
                                     My Profile
-                                </Button>
-                                <Button color="error" variant="contained" size="small" onClick={logoutUser} sx={{ ml: 2 }}>
-                                    Logout
                                 </Button>
                             </Box>
                         </Toolbar>

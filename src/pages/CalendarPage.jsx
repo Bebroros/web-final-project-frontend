@@ -160,7 +160,12 @@ const CalendarPage = () => {
 
     return (
         <Container sx={{ mt: 4, mb: 4 }}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+            <Paper elevation={3} sx={{ p: 2, borderRadius: 2,
+                '& .fc-day-today': {
+                    backgroundColor: '#e3f2fd !important',
+                }
+            }}
+            >
                 <FullCalendar
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
@@ -276,7 +281,7 @@ const CalendarPage = () => {
                                 textTransform: 'none',
                                 borderRadius: 2,
                                 px: 4,
-                                backgroundColor: '#6600ae'
+                                backgroundColor: '#2e426e'
                             }}
                         >
                             Save

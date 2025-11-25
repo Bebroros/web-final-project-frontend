@@ -127,15 +127,15 @@ const SubscriptionsPage = () => {
                 }}
             >
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1565c0' }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#2e426e' }}>
                         Monthly Expenses
                     </Typography>
                 </Box>
                 <Chip
-                    icon={<MonetizationOnIcon />}
+                    icon={<MonetizationOnIcon sx={{ color: 'white !important' }}/>}
                     label={`$${calculateTotalMonthly()}`}
                     color="primary"
-                    sx={{ fontSize: '1.5rem', padding: 3, height: 'auto', borderRadius: 4 }}
+                    sx={{ fontSize: '1.5rem', padding: 3, height: 'auto', borderRadius: 4, backgroundColor: 'rgba(46,66,110,0.85)', }}
                 />
             </Paper>
 
