@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { Container, TextField, Button, Typography, Box, Alert, Paper } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
     const { loginUser, error } = useContext(AuthContext);
@@ -56,8 +57,13 @@ const LoginPage = () => {
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Sign In
-                    </Button>
 
+                    </Button>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Link to="/register" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                            {"Don't have an account? Sign Up"}
+                        </Link>
+                    </Box>
                 </Box>
             </Paper>
         </Container>

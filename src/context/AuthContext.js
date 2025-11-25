@@ -41,24 +41,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const registerUser = async (username, password) => {
+
+    const registerUser = async (userData) => {
         setLoading(true);
         setError(null);
         try {
-            await api.post('/auth/register/', {
-                username,
-                password
-            });
+            await api.post('/auth/register/', userData);
 
-            await loginUser(username, password);
+            await loginUser(userData.username, userData.password);
         } catch (err) {
-            console.error("Registration failed", err);
-            setError("Registration failed. Try a different username.");
+            console.error("Registration failed", err.response?.data);
+
+            let errorMessage = "Registration failed.";
+            if (err.response && err.response.data) {
+
+                const keys = Object.keys(err.response.data);
+                if (keys.length > 0) {
+                    const firstKey = keys[0];
+                    errorMessage = `${firstKey}: ${err.response.data[firstKey]}`;
+                }
+            }
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
-
 
     const logoutUser = () => {
         setAuthTokens(null);

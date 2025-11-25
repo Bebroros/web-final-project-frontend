@@ -7,6 +7,8 @@ import LoginPage from './pages/LoginPage';
 import CalendarPage from './pages/CalendarPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import ProfilePage from './pages/ProfilePage';
+import RegisterPage from "./pages/RegisterPage";
+import PrivateRoute from './utils/PrivateRoute';
 
 function App() {
     return (
@@ -15,10 +17,33 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
-                        <Route path="/calendar" element={<CalendarPage />} />
-                        <Route path="/subs" element={<SubscriptionsPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/" element={<Navigate to="/login" replace />} />
+                        <Route path="/register" element={<RegisterPage />} />
+
+                        {/* Захищені маршрути */}
+                        <Route
+                            path="/calendar"
+                            element={
+                                <PrivateRoute>
+                                    <CalendarPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/subs"
+                            element={
+                                <PrivateRoute>
+                                    <SubscriptionsPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <ProfilePage />
+                                </PrivateRoute>
+                            }
+                        />
                     </Routes>
                 </Layout>
             </AuthProvider>
