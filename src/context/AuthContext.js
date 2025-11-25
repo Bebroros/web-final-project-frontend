@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -75,11 +75,39 @@ export const AuthProvider = ({ children }) => {
         navigate('/login');
     };
 
+    const googleLogin = async (accessToken) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.post('/auth/google/', {
+                access_token: accessToken
+            });
+
+            const { access, refresh, key } = response.data;
+
+            const tokenToSave = access || key;
+
+            localStorage.setItem('access_token', tokenToSave);
+            if (refresh) localStorage.setItem('refresh_token', refresh);
+
+            setAuthTokens(tokenToSave);
+
+            navigate('/calendar');
+
+        } catch (err) {
+            console.error("Google Auth Error:", err);
+            setError("Failed to login with Google.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const contextData = {
         user,
         authTokens,
         loginUser,
         registerUser,
+        googleLogin,
         logoutUser,
         loading,
         error

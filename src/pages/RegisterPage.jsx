@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { Container, TextField, Button, Typography, Box, Alert, Paper, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
+import GoogleButton from '../components/GoogleButton';
+
 
 const RegisterPage = () => {
     const { registerUser, error } = useContext(AuthContext);
@@ -170,6 +172,7 @@ const RegisterPage = () => {
                         Sign Up
                     </Button>
 
+                    <GoogleButton />
                     <Box sx={{ textAlign: 'center' }}>
                         <Link to="/login" style={{ textDecoration: 'none', color: '#1976d2' }}>
                             {"Already have an account? Sign In"}

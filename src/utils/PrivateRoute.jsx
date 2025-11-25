@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
-    const { user, authTokens } = useContext(AuthContext);
+    const { authTokens } = useContext(AuthContext);
 
 
     if (!authTokens) {
