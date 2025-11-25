@@ -9,6 +9,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from "./pages/RegisterPage";
 import PrivateRoute from './utils/PrivateRoute';
+import HomePage from './pages/HomePage';
 
 function App() {
     return (
@@ -19,7 +20,15 @@ function App() {
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
 
-                        {/* Захищені маршрути */}
+                        <Route
+                            path="/"
+                            element={
+                                <PrivateRoute>
+                                    <HomePage />
+                                </PrivateRoute>
+                            }
+                        />
+
                         <Route
                             path="/calendar"
                             element={

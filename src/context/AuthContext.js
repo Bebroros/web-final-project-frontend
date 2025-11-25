@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
             setAuthTokens(access);
 
-            navigate('/calendar');
+            navigate('/');
         } catch (err) {
             console.error("Login failed", err);
             setError("Invalid username or password");
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
             setAuthTokens(tokenToSave);
 
-            navigate('/calendar');
+            navigate('/');
 
         } catch (err) {
             console.error("Google Auth Error:", err);

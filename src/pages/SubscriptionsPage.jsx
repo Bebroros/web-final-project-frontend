@@ -122,7 +122,7 @@ const SubscriptionsPage = () => {
                 elevation={3}
                 sx={{
                     p: 3, mb: 4, borderRadius: 3,
-                    background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+                    background: 'linear-gradient(to right, #fff 0%, #c4e1f9 100%)',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                 }}
             >
@@ -135,7 +135,7 @@ const SubscriptionsPage = () => {
                     icon={<MonetizationOnIcon sx={{ color: 'white !important' }}/>}
                     label={`$${calculateTotalMonthly()}`}
                     color="primary"
-                    sx={{ fontSize: '1.5rem', padding: 3, height: 'auto', borderRadius: 4, backgroundColor: 'rgba(46,66,110,0.85)', }}
+                    sx={{ fontSize: '1.5rem', padding: 3, height: 'auto', borderRadius: 4, backgroundColor: '#002533', }}
                 />
             </Paper>
 

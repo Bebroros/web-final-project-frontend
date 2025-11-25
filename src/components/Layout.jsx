@@ -13,8 +13,18 @@ const Layout = ({ children }) => {
                 <AppBar position="static" sx={{ backgroundColor: '#2e436f' }}>
                     <Container maxWidth="lg">
                         <Toolbar disableGutters>
-
-                            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                            <Box
+                                component={Link}
+                                to="/"
+                                sx={{
+                                    flexGrow: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                    cursor: 'pointer'
+                                }}
+                            >
                                 <Box
                                     component="img"
                                     src="/pot_logo.png"
