@@ -33,7 +33,6 @@ const HomePage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Виконуємо 3 запити паралельно
                 const [userRes, eventsRes, subsRes] = await Promise.all([
                     api.get('/auth/user/'),
                     api.get('/events/'),
@@ -71,7 +70,6 @@ const HomePage = () => {
         fetchData();
     }, [user]);
 
-    // Функція для Астрології
     const getPrediction = async () => {
         setAstroLoading(true);
         setAstroError(null);
@@ -110,7 +108,7 @@ const HomePage = () => {
 
             <Grid container spacing={4} alignItems="stretch">
 
-                {/* --- 1. КАРТКА ПОДІЙ --- */}
+
                 <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
                     <Card sx={{
                         width: '100%',
@@ -227,7 +225,6 @@ const HomePage = () => {
                         }} />
 
                         <CardContent>
-                            {/* Заголовок */}
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                                 <AutoAwesomeIcon fontSize="large" sx={{ mr: 1, color: '#f6f2d9' }} />
                                 <Typography variant="h5" fontWeight="bold" sx={{ color: '#ede1fa' }}>

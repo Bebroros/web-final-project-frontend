@@ -25,7 +25,7 @@ api.interceptors.response.use(
 
 
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; // Мітимо запит, щоб не зациклитись
+            originalRequest._retry = true;
 
             const refreshToken = localStorage.getItem('refresh_token');
 

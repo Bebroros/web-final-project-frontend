@@ -174,12 +174,12 @@ const SubscriptionsPage = () => {
                                     data={prepareChartData()}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={60} // Робить "пончик" (дірка всередині)
+                                    innerRadius={60}
                                     outerRadius={100}
                                     fill="#8884d8"
                                     paddingAngle={5}
                                     dataKey="value"
-                                    label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`} // Підписи
+                                    label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
                                 >
                                     {prepareChartData().map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -203,7 +203,6 @@ const SubscriptionsPage = () => {
                 <AddIcon />
             </Fab>
 
-            {/* Модальне вікно */}
             <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
                 <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>
                     {selectedId ? 'Edit Subscription' : 'Add New Subscription'}
