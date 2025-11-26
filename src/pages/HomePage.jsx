@@ -25,7 +25,7 @@ const HomePage = () => {
     });
 
 
-    const [prediction, setPrediction] = useState(null);
+    const [setPrediction] = useState(null);
     const [astroLoading, setAstroLoading] = useState(false);
     const [astroError, setAstroError] = useState(null);
 
