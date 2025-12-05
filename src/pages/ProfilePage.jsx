@@ -13,7 +13,7 @@ import api from '../api/axios';
 import AuthContext from '../context/AuthContext';
 
 const ProfilePage = () => {
-    const { logoutUser } = useContext(AuthContext);
+    const { logoutUser, user } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
         username: '',
@@ -26,22 +26,20 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
-
-
     const [avatarUrl, setAvatarUrl] = useState('');
 
-
     const generateRandomAvatar = (username) => {
-
         const randomSalt = Math.random().toString(36).substring(7);
-
         return `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${username}-${randomSalt}`;
     };
 
     useEffect(() => {
+        if (!user || !user.user_id) return;
+
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/auth/user/');
+
+                const response = await api.get(`/auth/user/${user.user_id}/`);
                 const data = response.data;
 
                 setFormData({
@@ -57,13 +55,14 @@ const ProfilePage = () => {
             } catch (error) {
                 console.error("Failed to fetch profile", error);
                 setErrorMsg("Failed to load profile data.");
+
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProfile();
-    }, []);
+    }, [user]);
 
     const handleChange = (e) => {
         setFormData({
@@ -77,9 +76,16 @@ const ProfilePage = () => {
         setSuccessMsg('');
         setErrorMsg('');
 
+        if (!user || !user.user_id) {
+            setErrorMsg("User ID not found.");
+            return;
+        }
+
         try {
+
             const { email, ...dataToSend } = formData;
-            await api.patch('/auth/user/', dataToSend);
+
+            await api.patch(`/auth/user/${user.user_id}/`, dataToSend);
 
             setSuccessMsg("Profile updated successfully!");
             setTimeout(() => setSuccessMsg(''), 3000);
@@ -99,7 +105,6 @@ const ProfilePage = () => {
 
     return (
         <Container component="main" maxWidth="md" sx={{ mt: 4, mb: 8 }}>
-
             <Paper
                 elevation={6}
                 sx={{
@@ -149,7 +154,6 @@ const ProfilePage = () => {
                 </Box>
             </Paper>
 
-
             <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
                 <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', color: '#333' }}>
                     Edit Personal Information
@@ -160,7 +164,6 @@ const ProfilePage = () => {
 
                 <Box component="form" onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
-
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
@@ -197,7 +200,6 @@ const ProfilePage = () => {
                             />
                         </Grid>
 
-
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
@@ -215,7 +217,6 @@ const ProfilePage = () => {
                             />
                         </Grid>
 
-
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
@@ -232,7 +233,6 @@ const ProfilePage = () => {
                                 }}
                             />
                         </Grid>
-
 
                         <Grid item xs={12}>
                             <TextField
