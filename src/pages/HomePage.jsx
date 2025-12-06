@@ -78,11 +78,11 @@ const HomePage = () => {
         setAstroLoading(true);
         setAstroError(null);
         try {
-            const response = await api.get('/astrology/prediction/');
-            setPrediction(response.data.prediction);
+            const response = await api.get('/horoscope/');
+            setPrediction(response.data.horoscope);
         } catch (error) {
             console.error("Astro fetch failed", error);
-            setAstroError("Stars are silent (Backend endpoint needed).");
+            setAstroError("Stars are silent...");
         } finally {
             setAstroLoading(false);
         }
