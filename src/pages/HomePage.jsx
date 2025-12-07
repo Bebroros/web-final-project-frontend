@@ -90,7 +90,6 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-            z
             <style>{`
                 @keyframes pulse-glow {
                     0% { box-shadow: 0 0 0 0 rgba(235, 223, 248, 0.4); transform: scale(1); }
