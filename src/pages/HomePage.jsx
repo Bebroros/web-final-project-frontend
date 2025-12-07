@@ -66,7 +66,6 @@ const HomePage = () => {
 
             } catch (error) {
                 console.error("Dashboard data fetch failed", error);
-                // Навіть якщо впало, прибираємо лоадер
                 setStats(prev => ({ ...prev, loading: false }));
             }
         };
@@ -77,6 +76,7 @@ const HomePage = () => {
     const getPrediction = async () => {
         setAstroLoading(true);
         setAstroError(null);
+        setPrediction(null); // Очищаємо попереднє, щоб показати анімацію
         try {
             const response = await api.get('/horoscope/');
             setPrediction(response.data.horoscope);
@@ -90,6 +90,34 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+            z
+            <style>{`
+                @keyframes pulse-glow {
+                    0% { box-shadow: 0 0 0 0 rgba(235, 223, 248, 0.4); transform: scale(1); }
+                    70% { box-shadow: 0 0 0 20px rgba(235, 223, 248, 0); transform: scale(1.05); }
+                    100% { box-shadow: 0 0 0 0 rgba(235, 223, 248, 0); transform: scale(1); }
+                }
+                @keyframes twinkle {
+                    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+                    50% { opacity: 1; transform: scale(1.2); }
+                }
+                .magic-ball {
+                    width: 60px;
+                    height: 60px;
+                    background: radial-gradient(circle at 30% 30%, #f6f2d9, #ab47bc);
+                    border-radius: 50%;
+                    margin: 0 auto;
+                    animation: pulse-glow 2s infinite;
+                    position: relative;
+                }
+                .star {
+                    position: absolute;
+                    background: white;
+                    border-radius: 50%;
+                    animation: twinkle 1.5s infinite ease-in-out;
+                }
+            `}</style>
+
             <Paper
                 elevation={0}
                 sx={{
@@ -188,18 +216,32 @@ const HomePage = () => {
                                 </Typography>
                             </Box>
 
-                            <Box sx={{ minHeight: 100 }}>
+                            <Box sx={{ minHeight: 120, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                 {!astroLoading && !astroError && !prediction && (
                                     <Typography variant="body1" sx={{ opacity: 0.8, fontStyle: 'italic', fontSize: '1.1rem' }}>
                                         "The stars are aligning... What do they hold for you today?"
                                     </Typography>
                                 )}
-                                {prediction && (
-                                    <Typography variant="body1" sx={{ fontStyle: 'italic', fontSize: '1rem' }}>
+
+                                {astroLoading && (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                        <div className="magic-ball">
+                                            <div className="star" style={{ top: '-10px', left: '10px', width: '4px', height: '4px', animationDelay: '0.1s' }}></div>
+                                            <div className="star" style={{ bottom: '5px', right: '-10px', width: '6px', height: '6px', animationDelay: '0.5s' }}></div>
+                                            <div className="star" style={{ top: '20px', left: '-15px', width: '3px', height: '3px', animationDelay: '0.8s' }}></div>
+                                        </div>
+                                        <Typography variant="body2" sx={{ color: '#bb8fd3', fontStyle: 'italic' }}>
+                                            Consulting the cosmos...
+                                        </Typography>
+                                    </Box>
+                                )}
+
+                                {prediction && !astroLoading && (
+                                    <Typography variant="body1" sx={{ fontStyle: 'italic', fontSize: '1rem', lineHeight: 1.6 }}>
                                         "{prediction}"
                                     </Typography>
                                 )}
-                                {astroLoading && <CircularProgress sx={{ color: '#bb8fd3' }} />}
+
                                 {astroError && (
                                     <Alert severity="warning" sx={{ mt: 1, bgcolor: 'rgb(46,35,75)', color: '#ffffff', fontWeight: 'bold' }}>
                                         {astroError}
@@ -208,8 +250,23 @@ const HomePage = () => {
                             </Box>
                         </CardContent>
                         <CardActions sx={{ p: 2, pt: 0 }}>
-                            <Button fullWidth variant="contained" size="large" onClick={getPrediction} disabled={astroLoading} sx={{ borderRadius: 2, py: 1, bgcolor: '#2e234c', color: '#ebdff8', fontWeight: 'bold', '&:hover': { bgcolor: '#490078' } }}>
-                                Get Prediction
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                onClick={getPrediction}
+                                disabled={astroLoading}
+                                sx={{
+                                    borderRadius: 2,
+                                    py: 1,
+                                    bgcolor: '#2e234c',
+                                    color: '#ebdff8',
+                                    fontWeight: 'bold',
+                                    '&:hover': { bgcolor: '#490078' },
+                                    '&.Mui-disabled': { bgcolor: '#1a1430', color: '#666' }
+                                }}
+                            >
+                                {astroLoading ? 'Divining...' : 'Get Prediction'}
                             </Button>
                         </CardActions>
                     </Card>
