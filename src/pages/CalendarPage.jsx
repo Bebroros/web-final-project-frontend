@@ -31,6 +31,8 @@ const CalendarPage = () => {
     const initialTodoForm = { title: '', description: '', importance: 3, duration: 60 };
     const [todoFormData, setTodoFormData] = useState(initialTodoForm);
 
+    const [ghostPositions, setGhostPositions] = useState({});
+
     const toLocalISOString = (date) => {
         const offset = date.getTimezoneOffset() * 60000;
         return (new Date(date - offset)).toISOString().slice(0, 16);
@@ -97,6 +99,62 @@ const CalendarPage = () => {
         return null;
     };
 
+    const handleEventDrop = async (info) => {
+        const { event } = info;
+        const props = event.extendedProps;
+
+        if (props.isSuggestion) {
+            const taskId = props.originalTask.id;
+
+            const safeEnd = event.end
+                ? event.end
+                : new Date(event.start.getTime() + (props.originalTask.duration || 60) * 60000);
+
+            setGhostPositions(prev => ({
+                ...prev,
+                [taskId]: { start: event.start, end: safeEnd }
+            }));
+            return;
+        }
+
+        try {
+            await api.patch(`/events/${event.id}/`, {
+                start_at: event.start.toISOString(),
+                end_at: event.end ? event.end.toISOString() : event.start.toISOString()
+            });
+            await fetchData();
+        } catch (error) {
+            console.error("Error in moving event:", error);
+            info.revert();
+            alert("Error in moving event");
+        }
+    };
+
+    const handleEventResize = async (info) => {
+        const { event } = info;
+        const props = event.extendedProps;
+
+        if (props.isSuggestion) {
+            const taskId = props.originalTask.id;
+            setGhostPositions(prev => ({
+                ...prev,
+                [taskId]: { start: event.start, end: event.end }
+            }));
+            return;
+        }
+
+        try {
+            await api.patch(`/events/${event.id}/`, {
+                start_at: event.start.toISOString(),
+                end_at: event.end.toISOString()
+            });
+            await fetchData();
+        } catch (error) {
+            console.error("Error resizing event:", error);
+            info.revert();
+            alert("Error resizing event");
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -143,28 +201,42 @@ const CalendarPage = () => {
             setCombinedEvents(events);
             return;
         }
+
         const sortedTodos = [...todos].sort((a, b) => b.importance - a.importance);
         let simulatedEvents = [...events];
 
         for (let task of sortedTodos) {
-            const freeSlot = findFirstFreeSlot(simulatedEvents, task.duration);
-            if (freeSlot) {
+            let assignedSlot = null;
+
+            if (ghostPositions[task.id]) {
+                assignedSlot = ghostPositions[task.id];
+            }
+
+            else {
+                assignedSlot = findFirstFreeSlot(simulatedEvents, task.duration);
+            }
+
+            if (assignedSlot) {
                 const suggestionEvent = {
                     id: `GHOST_${task.id}`,
                     title: `⇢ ${task.title}`,
-                    start: freeSlot.start.toISOString(),
-                    end: freeSlot.end.toISOString(),
+                    start: assignedSlot.start,
+                    end: assignedSlot.end,
                     backgroundColor: 'white',
                     borderColor: '#ab47bc',
                     textColor: '#ab47bc',
                     classNames: ['dashed-event'],
-                    extendedProps: { isSuggestion: true, originalTask: task, description: task.description }
+                    extendedProps: {
+                        isSuggestion: true,
+                        originalTask: task,
+                        description: task.description
+                    }
                 };
                 simulatedEvents.push(suggestionEvent);
             }
         }
         setCombinedEvents(simulatedEvents);
-    }, [events, todos]);
+    }, [events, todos, ghostPositions]);
 
 
     const handleDateSelect = (selectInfo) => {
@@ -187,12 +259,25 @@ const CalendarPage = () => {
 
         if (props.isSuggestion) {
             setIsSuggestionClick(true);
+            setSelectedEventId(null); //
+
+            const startStr = toLocalISOString(event.start);
+            let endStr;
+
+            if (event.end) {
+                endStr = toLocalISOString(event.end);
+            } else {
+                const duration = props.originalTask.duration || 60;
+                const newEnd = new Date(event.start.getTime() + duration * 60000);
+                endStr = toLocalISOString(newEnd);
+            }
+
             setEventFormData({
                 title: props.originalTask.title,
                 description: props.originalTask.description || '',
                 importance: props.originalTask.importance,
-                start_at: toLocalISOString(event.start),
-                end_at: toLocalISOString(event.end),
+                start_at: startStr,
+                end_at: endStr,
                 taskId: props.originalTask.id
             });
         } else {
@@ -272,6 +357,30 @@ const CalendarPage = () => {
         try { await api.delete(`/todo/${id}/`); fetchData(); } catch (e) { console.error(e); }
     };
 
+    const handleUnscheduleEvent = async () => {
+        if (!selectedEventId) return;
+
+        try {
+            const start = new Date(eventFormData.start_at);
+            const end = new Date(eventFormData.end_at);
+            const durationDiff = Math.round((end - start) / (1000 * 60));
+
+            await api.post('/todo/', {
+                title: eventFormData.title,
+                description: eventFormData.description || " ",
+                importance: parseInt(eventFormData.importance),
+                duration: durationDiff > 0 ? durationDiff : 60
+            });
+
+            await api.delete(`/events/${selectedEventId}/`);
+
+            setEventModalOpen(false);
+            fetchData();
+        } catch (e) {
+            console.error("Error unscheduling:", e);
+            alert("Error unscheduling:");
+        }
+    };
 
     return (
         <Box sx={{
@@ -311,6 +420,8 @@ const CalendarPage = () => {
                     slotMaxTime="23:00:00"
                     allDaySlot={false}
                     editable={true}
+                    eventDrop={handleEventDrop}
+                    eventResize={handleEventResize}
                     selectable={true}
                     selectMirror={true}
                     dayMaxEvents={true}
@@ -395,6 +506,12 @@ const CalendarPage = () => {
                 </DialogContent>
                 <DialogActions>
                     {!isSuggestionClick && selectedEventId && <Button onClick={handleDeleteEvent} color="error">Delete</Button>}
+
+                    {!isSuggestionClick && selectedEventId && (
+                        <Button onClick={handleUnscheduleEvent} color="warning">
+                            Unschedule
+                        </Button>
+                    )}
                     <Button onClick={() => setEventModalOpen(false)}>Cancel</Button>
                     <Button onClick={handleSaveEvent} variant="contained" color={isSuggestionClick ? "secondary" : "primary"}>
                         {isSuggestionClick ? "Schedule" : "Save"}
